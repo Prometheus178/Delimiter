@@ -11,12 +11,13 @@ import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.util.text.delimiter.Constants.DEFAULT_LENGTH;
+
 /**
  * @author Sergey Popov
  **/
 public class StringDelimiter implements Delimiter {
 
-    private static final int DEFAULT_LENGTH = 100;
     private String text;
     private int width;
     private String fontName;
@@ -36,7 +37,7 @@ public class StringDelimiter implements Delimiter {
     public List<String> split(String text) {
         this.text = text;
         this.width = DEFAULT_LENGTH;
-        validateText();
+        validateArguments();
         return delimiter();
     }
 
@@ -44,7 +45,7 @@ public class StringDelimiter implements Delimiter {
     public List<String> split(String text, int width) {
         this.text = text;
         this.width = width;
-        validateText();
+        validateArguments();
         return delimiter();
     }
 
@@ -55,7 +56,7 @@ public class StringDelimiter implements Delimiter {
         this.fontName = fontName.toLowerCase();
         this.fontSize = fontSize;
         this.fontStyle = FontStyle.PLANE.getFontCode();
-        validateText();
+        validateArguments();
         return delimiterByFontSize();
     }
 
@@ -66,14 +67,26 @@ public class StringDelimiter implements Delimiter {
         this.fontName = fontName.toLowerCase();
         this.fontSize = fontSize;
         this.fontStyle = fontStyle.getFontCode();
-        validateText();
+        validateArguments();
         return delimiterByFontSize();
     }
 
-    private void validateText() {
+    private void validateArguments() {
         if (text == null)
             throw new NullPointerException();
         if (text.isBlank()) {
+            throw new IllegalArgumentException();
+        }
+        if (width <= 0) {
+            throw new IllegalArgumentException();
+        }
+        if (fontName == null){
+            throw new NullPointerException();
+        }
+        if (fontName.isBlank()) {
+            throw new IllegalArgumentException();
+        }
+        if (fontSize <= 0) {
             throw new IllegalArgumentException();
         }
     }
@@ -115,10 +128,6 @@ public class StringDelimiter implements Delimiter {
         attributedString.addAttribute(TextAttribute.FONT, font);
         AttributedCharacterIterator styledText = attributedString.getIterator();
         LineBreakMeasurer measurer = new LineBreakMeasurer(styledText, renderContext);
-
-//        int begin = measurer.getPosition();
-//        int end = measurer.getPosition();
-//        int addCharacter = 0;
 
         while (measurer.getPosition() < styledText.getEndIndex()) {
             TextLayout layout = measurer.nextLayout(width);

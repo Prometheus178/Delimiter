@@ -1,8 +1,9 @@
 package org.util.text.delimiter;
 
-import org.junit.platform.commons.logging.Logger;
-import org.junit.platform.commons.logging.LoggerFactory;
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
 
@@ -12,12 +13,14 @@ import java.util.Random;
  **/
 class StringDelimiterTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String text = generateRandomString();
         Delimiter delimiter = new StringDelimiter();
 //        List<String> strings = delimiter.split(text);
-        List<String> strings = delimiter.split(text, 100, "Arial", 14);
-        strings.forEach(System.out::println);
+        List<String> strings = delimiter.split(text, 300, "Arial", 1);
+        Path file = Paths.get("new-file.txt");
+        Files.write(file, strings);
+//        strings.forEach(System.out::println);
     }
 
     private static String generateRandomString() {
