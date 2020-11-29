@@ -5,5 +5,17 @@ package org.util.text.delimiter;
  **/
 public enum FontStyle {
 
-    PLANE, ITALIC, BOLD
+    PLANE(0),
+    ITALIC(1),
+    BOLD(2);
+
+    private final int fontCode;
+
+    private FontStyle(int fontCode) {
+        this.fontCode = fontCode;
+    }
+
+    public int getFontCode() {
+        return fontCode;
+    }
 }

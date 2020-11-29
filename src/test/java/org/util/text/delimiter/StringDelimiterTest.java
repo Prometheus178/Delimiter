@@ -15,7 +15,8 @@ class StringDelimiterTest {
     public static void main(String[] args) {
         String text = generateRandomString();
         Delimiter delimiter = new StringDelimiter();
-        List<String> strings = delimiter.split(text);
+//        List<String> strings = delimiter.split(text);
+        List<String> strings = delimiter.split(text, 100, "Arial", 14);
         strings.forEach(System.out::println);
     }
 

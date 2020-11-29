@@ -1,6 +1,5 @@
 package org.util.text.delimiter;
 
-import java.awt.*;
 import java.util.List;
 
 /**
@@ -10,8 +9,11 @@ public interface Delimiter {
 
     List<String> split(String text);
 
-    List<String> split(String text, int length);
+    List<String> split(String text, int width);
 
-    List<String> split(String text, int length, String font , int fontSize, FontStyle fontStyle);
+
+    List<String> split(String text, int width, String fontName, int fontSize);
+
+    List<String> split(String text, int width, String fontName , int fontSize, FontStyle fontStyle);
 
 }

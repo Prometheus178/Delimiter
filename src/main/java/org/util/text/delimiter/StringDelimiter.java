@@ -1,5 +1,13 @@
 package org.util.text.delimiter;
 
+import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +19,10 @@ public class StringDelimiter implements Delimiter {
     private static final int DEFAULT_LENGTH = 100;
     private String text;
     private int width;
-    private int countSegments;
+    private String fontName;
+    private int fontSize;
+    private int fontStyle;
+    private int position;
     private int lastSegment;
     List<String> segments;
 
@@ -24,8 +35,39 @@ public class StringDelimiter implements Delimiter {
     @Override
     public List<String> split(String text) {
         this.text = text;
+        this.width = DEFAULT_LENGTH;
         validateText();
         return delimiter();
+    }
+
+    @Override
+    public List<String> split(String text, int width) {
+        this.text = text;
+        this.width = width;
+        validateText();
+        return delimiter();
+    }
+
+    @Override
+    public List<String> split(String text, int width, String fontName, int fontSize) {
+        this.text = text;
+        this.width = width;
+        this.fontName = fontName.toLowerCase();
+        this.fontSize = fontSize;
+        this.fontStyle = FontStyle.PLANE.getFontCode();
+        validateText();
+        return delimiterByFontSize();
+    }
+
+    @Override
+    public List<String> split(String text, int width, String fontName, int fontSize, FontStyle fontStyle) {
+        this.text = text;
+        this.width = width;
+        this.fontName = fontName.toLowerCase();
+        this.fontSize = fontSize;
+        this.fontStyle = fontStyle.getFontCode();
+        validateText();
+        return delimiterByFontSize();
     }
 
     private void validateText() {
@@ -38,19 +80,23 @@ public class StringDelimiter implements Delimiter {
 
     private List<String> delimiter() {
         segments = new ArrayList<>();
-        if (text.length() < DEFAULT_LENGTH) {
+        if (text.length() < width) {
             segments.add(text);
             return segments;
         }
-        width = DEFAULT_LENGTH;
         return getSegments();
+    }
+
+    private List<String> delimiterByFontSize() {
+        segments = new ArrayList<>();
+        return getSegmentsByFont();
     }
 
     private List<String> getSegments() {
         int begin = 0;
         int end;
-        for (countSegments = getCountSegments(); countSegments >= 0; countSegments--) {
-            if (countSegments == 0) {
+        for (position = getCountPosition(); position >= 0; position--) {
+            if (position == 0) {
                 end = begin + lastSegment;
             } else {
                 end = (begin == 0) ? width : begin + width;
@@ -61,21 +107,31 @@ public class StringDelimiter implements Delimiter {
         return segments;
     }
 
-    private int getCountSegments() {
-        countSegments = (text.length() / width);
+    private List<String> getSegmentsByFont() {
+        Font font = new Font(fontName, fontStyle, fontSize);
+        AffineTransform affinetransform = new AffineTransform();
+        FontRenderContext renderContext = new FontRenderContext(affinetransform, true, true);
+        AttributedString attributedString = new AttributedString(text);
+        attributedString.addAttribute(TextAttribute.FONT, font);
+        AttributedCharacterIterator styledText = attributedString.getIterator();
+        LineBreakMeasurer measurer = new LineBreakMeasurer(styledText, renderContext);
+
+//        int begin = measurer.getPosition();
+//        int end = measurer.getPosition();
+//        int addCharacter = 0;
+
+        while (measurer.getPosition() < styledText.getEndIndex()) {
+            TextLayout layout = measurer.nextLayout(width);
+            String line = text.substring(measurer.getPosition() - layout.getCharacterCount(), measurer.getPosition());
+            segments.add(line);
+        }
+        return segments;
+    }
+
+    private int getCountPosition() {
+        position = (text.length() / width);
         lastSegment = text.length() % width;
-        return countSegments;
+        return position;
     }
-
-    @Override
-    public List<String> split(String text, int width) {
-        return null;
-    }
-
-    @Override
-    public List<String> split(String text, int width, String font, int fontSize, FontStyle fontStyle) {
-        return null;
-    }
-
 
 }
