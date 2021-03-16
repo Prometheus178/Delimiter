@@ -16,7 +16,7 @@ import static org.util.text.delimiter.Constants.DEFAULT_LENGTH;
 /**
  * @author Sergey Popov
  **/
-public class StringDelimiter implements Delimiter {
+public class StringDelimiter {
 
     private String text;
     private int width;
@@ -28,67 +28,63 @@ public class StringDelimiter implements Delimiter {
     List<String> segments;
 
     /**
+     * split string by default width = 100
+     *
      * @param text
-     * @return
-     * @throws NullPointerException
-     * @throws IllegalArgumentException
+     * @return list of separated strings
      */
-    @Override
-    public List<String> split(String text) {
+    public  List<String> split(String text) {
         this.text = text;
         this.width = DEFAULT_LENGTH;
-        validateArguments();
         return delimiter();
     }
 
-    @Override
+    /**
+     * split string by width
+     *
+     * @param text
+     * @param width
+     * @return list of separated strings
+     */
     public List<String> split(String text, int width) {
         this.text = text;
         this.width = width;
-        validateArguments();
         return delimiter();
     }
 
-    @Override
+    /**
+     * split string by default FontStyle = Plane
+     *
+     * @param text
+     * @param width
+     * @param fontName
+     * @param fontSize
+     * @return list of separated strings
+     */
     public List<String> split(String text, int width, String fontName, int fontSize) {
         this.text = text;
         this.width = width;
         this.fontName = fontName.toLowerCase();
         this.fontSize = fontSize;
         this.fontStyle = FontStyle.PLANE.getFontCode();
-        validateArguments();
         return delimiterByFontSize();
     }
 
-    @Override
+    /**
+     * @param text
+     * @param width
+     * @param fontName
+     * @param fontSize
+     * @param fontStyle
+     * @return list of separated strings
+     */
     public List<String> split(String text, int width, String fontName, int fontSize, FontStyle fontStyle) {
         this.text = text;
         this.width = width;
         this.fontName = fontName.toLowerCase();
         this.fontSize = fontSize;
         this.fontStyle = fontStyle.getFontCode();
-        validateArguments();
         return delimiterByFontSize();
-    }
-
-    private void validateArguments() {
-        if (text == null)
-            throw new NullPointerException();
-        if (text.isBlank()) {
-            throw new IllegalArgumentException();
-        }
-        if (width <= 0) {
-            throw new IllegalArgumentException();
-        }
-        if (fontName == null){
-            throw new NullPointerException();
-        }
-        if (fontName.isBlank()) {
-            throw new IllegalArgumentException();
-        }
-        if (fontSize <= 0) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private List<String> delimiter() {
