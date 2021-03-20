@@ -18,14 +18,14 @@ import static org.util.text.delimiter.Constants.DEFAULT_LENGTH;
  **/
 public class StringDelimiter {
 
-    private String text;
-    private int width;
-    private String fontName;
-    private int fontSize;
-    private int fontStyle;
-    private int position;
-    private int lastSegment;
-    List<String> segments;
+    private static String text;
+    private static int width;
+    private static String fontName;
+    private static int fontSize;
+    private static int fontStyle;
+    private static int position;
+    private static int lastSegment;
+    private static List<String> segments;
 
     /**
      * split string by default width = 100
@@ -34,8 +34,8 @@ public class StringDelimiter {
      * @return list of separated strings
      */
     public  List<String> split(String text) {
-        this.text = text;
-        this.width = DEFAULT_LENGTH;
+        StringDelimiter.text = text;
+        StringDelimiter.width = DEFAULT_LENGTH;
         return delimiter();
     }
 
@@ -43,12 +43,12 @@ public class StringDelimiter {
      * split string by width
      *
      * @param text
-     * @param width
+     * @param width in pixel
      * @return list of separated strings
      */
-    public List<String> split(String text, int width) {
-        this.text = text;
-        this.width = width;
+    public static List<String> split(String text, int width) {
+        StringDelimiter.text = text;
+        StringDelimiter.width = width;
         return delimiter();
     }
 
@@ -56,38 +56,38 @@ public class StringDelimiter {
      * split string by default FontStyle = Plane
      *
      * @param text
-     * @param width
+     * @param width in pixel
      * @param fontName
      * @param fontSize
      * @return list of separated strings
      */
-    public List<String> split(String text, int width, String fontName, int fontSize) {
-        this.text = text;
-        this.width = width;
-        this.fontName = fontName.toLowerCase();
-        this.fontSize = fontSize;
-        this.fontStyle = FontStyle.PLANE.getFontCode();
+    public static List<String> split(String text, int width, String fontName, int fontSize) {
+        StringDelimiter.text = text;
+        StringDelimiter.width = width;
+        StringDelimiter.fontName = fontName.toLowerCase();
+        StringDelimiter.fontSize = fontSize;
+        StringDelimiter.fontStyle = FontStyle.PLANE.getFontCode();
         return delimiterByFontSize();
     }
 
     /**
      * @param text
-     * @param width
+     * @param width in pixel
      * @param fontName
      * @param fontSize
      * @param fontStyle
      * @return list of separated strings
      */
-    public List<String> split(String text, int width, String fontName, int fontSize, FontStyle fontStyle) {
-        this.text = text;
-        this.width = width;
-        this.fontName = fontName.toLowerCase();
-        this.fontSize = fontSize;
-        this.fontStyle = fontStyle.getFontCode();
+    public static List<String> split(String text, int width, String fontName, int fontSize, FontStyle fontStyle) {
+        StringDelimiter.text = text;
+        StringDelimiter.width = width;
+        StringDelimiter.fontName = fontName.toLowerCase();
+        StringDelimiter.fontSize = fontSize;
+        StringDelimiter.fontStyle = fontStyle.getFontCode();
         return delimiterByFontSize();
     }
 
-    private List<String> delimiter() {
+    private static List<String> delimiter() {
         segments = new ArrayList<>();
         if (text.length() < width) {
             segments.add(text);
@@ -96,12 +96,12 @@ public class StringDelimiter {
         return getSegments();
     }
 
-    private List<String> delimiterByFontSize() {
+    private static List<String> delimiterByFontSize() {
         segments = new ArrayList<>();
         return getSegmentsByFont();
     }
 
-    private List<String> getSegments() {
+    private static List<String> getSegments() {
         int begin = 0;
         int end;
         for (position = getCountPosition(); position >= 0; position--) {
@@ -116,7 +116,7 @@ public class StringDelimiter {
         return segments;
     }
 
-    private List<String> getSegmentsByFont() {
+    private static List<String> getSegmentsByFont() {
         Font font = new Font(fontName, fontStyle, fontSize);
         AffineTransform affinetransform = new AffineTransform();
         FontRenderContext renderContext = new FontRenderContext(affinetransform, true, true);
@@ -133,7 +133,7 @@ public class StringDelimiter {
         return segments;
     }
 
-    private int getCountPosition() {
+    private static int getCountPosition() {
         position = (text.length() / width);
         lastSegment = text.length() % width;
         return position;
